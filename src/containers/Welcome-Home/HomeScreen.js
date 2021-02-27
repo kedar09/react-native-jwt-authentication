@@ -3,7 +3,8 @@ import {View, ScrollView, LogBox} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 
 import {Button, Card, Divider, Text} from 'react-native-paper';
-
+import {API_URL} from '../../config/config';
+import styles from './home-screen.css';
 class HomeScreen extends Component {
   constructor(props) {
     super(props);
@@ -20,7 +21,7 @@ class HomeScreen extends Component {
       let authId = await AsyncStorage.getItem('authId');
       authId = parseInt(authId);
       console.log(authId);
-      return fetch('http://172.17.0.1:3001/users/getUserProfile', {
+      return fetch(API_URL + '/users/getUserProfile', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -61,12 +62,7 @@ class HomeScreen extends Component {
 
   render() {
     return (
-      <View
-        style={{
-          flex: 1,
-          alignItems: 'stretch',
-          padding: 20,
-        }}>
+      <View style={styles.viewHomeScreen}>
         <ScrollView>
           <Card>
             <Card.Title title="User Information" />

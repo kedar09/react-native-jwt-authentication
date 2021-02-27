@@ -3,8 +3,8 @@ import {View, Alert, ScrollView, AsyncStorage, LogBox} from 'react-native';
 import * as yup from 'yup';
 import {Formik} from 'formik';
 import {HelperText, TextInput, Button, Card} from 'react-native-paper';
-
-class RegistrationScreen extends Component {
+import styles from './register-screen.css';
+class RegisterScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -23,12 +23,7 @@ class RegistrationScreen extends Component {
 
   render() {
     return (
-      <View
-        style={{
-          flex: 1,
-          alignItems: 'stretch',
-          padding: 20,
-        }}>
+      <View style={styles.viewRegisterScreen}>
         <ScrollView>
           <Card>
             <Card.Title title="Registration Form" />
@@ -223,4 +218,4 @@ class RegistrationScreen extends Component {
   }
 }
 
-export default RegistrationScreen;
+export default RegisterScreen;

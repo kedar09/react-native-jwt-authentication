@@ -2,7 +2,7 @@ import * as React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import LoginScreen from '../containers/Login/LoginScreen';
-import RegistrationScreen from '../containers/Registration/RegistrationScreen';
+import RegisterScreen from '../containers/Register/RegisterScreen';
 import HomeScreen from '../containers/Welcome-Home/HomeScreen';
 import ChangePasswordScreen from '../containers/Change-Password/ChangePasswordScreen';
 import EditProfileScreen from '../containers/Edit-Profile/EditProfileScreen';
@@ -20,7 +20,7 @@ export const RootNavigator = () => {
         />
         <Stack.Screen
           name="register"
-          component={RegistrationScreen}
+          component={RegisterScreen}
           options={{title: 'Registration'}}
         />
         <Stack.Screen

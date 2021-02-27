@@ -5,6 +5,8 @@ import AsyncStorage from '@react-native-community/async-storage';
 import * as yup from 'yup';
 import {Formik} from 'formik';
 import {HelperText, TextInput, Button, Card} from 'react-native-paper';
+import styles from './login-screen.css';
+import {API_URL} from '../../config/config';
 
 class LoginScreen extends Component {
   constructor(props) {
@@ -30,12 +32,7 @@ class LoginScreen extends Component {
 
   render() {
     return (
-      <View
-        style={{
-          flex: 1,
-          alignItems: 'stretch',
-          padding: 20,
-        }}>
+      <View style={styles.viewLoginScreen}>
         <ScrollView>
           <Card>
             <Card.Title title="Registration Form" />
@@ -48,7 +45,7 @@ class LoginScreen extends Component {
                     email: values.email,
                     password: values.password,
                   };
-                  fetch(`http://172.17.0.1:3001/auth/loginUser`, {
+                  fetch(API_URL + '/auth/loginUser', {
                     method: 'POST',
                     headers: {
                       Accept: 'application/json',
@@ -131,7 +128,7 @@ class LoginScreen extends Component {
                     </Button>
 
                     <Button
-                      style={{marginTop: 10}}
+                      style={styles.createNewAccountButtonLoginScreen}
                       color="#3333ff"
                       onPress={() =>
                         this.props.navigation.navigate('register')

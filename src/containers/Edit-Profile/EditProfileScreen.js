@@ -14,6 +14,7 @@ import {
 
 import * as yup from 'yup';
 import {Formik} from 'formik';
+import styles from './edit-profile-screen.css';
 
 class EditProfileScreen extends Component {
   constructor(props) {
@@ -76,12 +77,7 @@ class EditProfileScreen extends Component {
 
   render() {
     return (
-      <View
-        style={{
-          flex: 1,
-          alignItems: 'stretch',
-          padding: 20,
-        }}>
+      <View style={styles.viewEditProfileScreen}>
         <ScrollView>
           <Card>
             <Card.Title title="User Profile" />

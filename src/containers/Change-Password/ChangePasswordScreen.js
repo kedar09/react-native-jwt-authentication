@@ -1,19 +1,18 @@
 import React, {Component} from 'react';
 import {View, ScrollView, LogBox, Alert} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
-
 import {
   Button,
   Card,
   Title,
   Divider,
-  Text,
   TextInput,
   HelperText,
 } from 'react-native-paper';
 
 import * as yup from 'yup';
 import {Formik} from 'formik';
+import styles from './change-password-screen.css';
 
 class ChangePasswordScreen extends Component {
   constructor(props) {
@@ -74,12 +73,7 @@ class ChangePasswordScreen extends Component {
 
   render() {
     return (
-      <View
-        style={{
-          flex: 1,
-          alignItems: 'stretch',
-          padding: 20,
-        }}>
+      <View style={styles.viewChangePasswordScreen}>
         <ScrollView>
           <Card>
             <Card.Title title="User Password" />
