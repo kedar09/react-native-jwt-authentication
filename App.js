@@ -7,12 +7,12 @@
  */
 
 import React from 'react';
-import { AppNavigator } from './src/AppNavigator';
+import {RootNavigator} from './src/navigation/RootNavigator';
 
-const App: () => React$Node = () => {
+const App = () => {
   return (
     <>
-      <AppNavigator />
+      <RootNavigator />
     </>
   );
 };
