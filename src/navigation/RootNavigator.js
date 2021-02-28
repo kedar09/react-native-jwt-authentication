@@ -21,7 +21,7 @@ export const RootNavigator = () => {
         <Stack.Screen
           name="register"
           component={RegisterScreen}
-          options={{title: 'Registration'}}
+          options={{title: 'Registration', headerShown: false}}
         />
         <Stack.Screen
           name="welcome-home"
