@@ -1,46 +1,26 @@
-import React, {Component} from 'react';
-import {View, ScrollView, LogBox} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {View, ScrollView} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 
-import {Button, Card, Divider, Text} from 'react-native-paper';
-import {API_URL} from '../../config/config';
+import {Card, Divider, Text} from 'react-native-paper';
 import styles from './home-screen.css';
-class HomeScreen extends Component {
-  constructor(props) {
-    super(props);
-    // let userData = this.props.navigation.state.params.userData;
-    this.state = {
-      userData: '',
-    };
-  }
+import MyButton from '../../components/MyButton/MyButton';
+import {getUserProfileDataService} from '../../services/user/user.services';
+import AppHeader from '../../components/AppHeader/AppHeader';
 
-  async componentDidMount() {
-    LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
+const HomeScreen = (props) => {
+  const [state, setState] = useState({userData: ''});
+
+  const getUserProfileData = async () => {
     try {
-      let token = await AsyncStorage.getItem('token');
-      let authId = await AsyncStorage.getItem('authId');
-      authId = parseInt(authId);
-      console.log(authId);
-      return fetch(API_URL + '/users/getUserProfile', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({authId: authId}),
-      })
-        .then((response) => response.json())
-        .then((responseJson) => {
-          console.log(responseJson);
-          this.setState(
-            {
-              userData: responseJson[0],
-            },
-            function () {
-              // In this block you can do something with new state.
-            },
-          );
+      getUserProfileDataService()
+        .then((responseData) => {
+          console.log('userData' + responseData);
+          if (responseData.length > 0) {
+            setState({...state, userData: responseData[0]});
+          } else {
+            console.log('error');
+          }
         })
         .catch((error) => {
           console.error(error);
@@ -48,53 +28,60 @@ class HomeScreen extends Component {
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
-  logOut = async () => {
+  useEffect(() => {
+    getUserProfileData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const logOut = async () => {
     try {
       await AsyncStorage.removeItem('token');
       await AsyncStorage.removeItem('authId');
-      this.props.navigation.navigate('login');
+      props.navigation.navigate('login');
     } catch (error) {
       // Error saving data
     }
   };
 
-  render() {
-    return (
-      <View style={styles.viewHomeScreen}>
-        <ScrollView>
-          <Card>
-            <Card.Title title="User Information" />
-            <Divider />
-            <Card.Content>
-              <Text>Name: {this.state.userData.displayName}</Text>
-              <Text>Email: {this.state.userData.email}</Text>
-              <Text>Phone Number: {this.state.userData.phoneNumber}</Text>
-              <Button
-                style={{marginTop: 20}}
-                onPress={() => this.props.navigation.navigate('edit-profile')}>
-                Edit Profile
-              </Button>
-              <Button
-                style={{marginTop: 20}}
-                onPress={() =>
-                  this.props.navigation.navigate('change-password')
-                }>
-                Change Password
-              </Button>
-            </Card.Content>
-          </Card>
-          <Button
-            style={{marginTop: 20}}
-            onPress={() => this.logOut()}
-            mode="contained">
-            Log Out
-          </Button>
-        </ScrollView>
-      </View>
-    );
-  }
-}
+  return (
+    <View style={styles.viewHomeScreen}>
+      <AppHeader
+        headerTitle="Home"
+        leftIconMenu={false}
+        rightIconMenu={false}
+      />
+
+      <ScrollView>
+        <Card>
+          <Card.Title title="User Information" />
+          <Divider />
+          <Card.Content>
+            <Text>Name: {state.userData.displayName}</Text>
+            <Text>Email: {state.userData.email}</Text>
+            <Text>Phone Number: {state.userData.phoneNumber}</Text>
+            <MyButton
+              style={styles.buttonHomeScreen}
+              onPress={() => props.navigation.navigate('edit-profile')}
+              buttonTitle="Edit Profile"
+            />
+            <MyButton
+              style={styles.buttonHomeScreen}
+              onPress={() => props.navigation.navigate('change-password')}
+              buttonTitle="Change Password"
+            />
+          </Card.Content>
+        </Card>
+        <MyButton
+          style={styles.buttonHomeScreen}
+          onPress={() => logOut()}
+          mode="contained"
+          buttonTitle="Log Out"
+        />
+      </ScrollView>
+    </View>
+  );
+};
 
 export default HomeScreen;

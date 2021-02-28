@@ -1,4 +1,3 @@
-import {Alert} from 'react-native';
 import {API_URL} from '../../config/config';
 
 export const loginUserService = async (userData) => {

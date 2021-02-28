@@ -26,7 +26,7 @@ export const RootNavigator = () => {
         <Stack.Screen
           name="welcome-home"
           component={HomeScreen}
-          options={{title: 'Home'}}
+          options={{title: 'Home', headerShown: false}}
         />
         <Stack.Screen
           name="change-password"
