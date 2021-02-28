@@ -1,149 +1,115 @@
-import React, {Component} from 'react';
-import {View, Alert, ScrollView, LogBox} from 'react-native';
+import React from 'react';
+import {View, Alert, ScrollView} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 
 import * as yup from 'yup';
 import {Formik} from 'formik';
-import {HelperText, TextInput, Button, Card} from 'react-native-paper';
+import {Card} from 'react-native-paper';
 import styles from './login-screen.css';
-import {API_URL} from '../../config/config';
+import {loginUserService} from '../../services/authentication/authentication.services';
+import AppHeader from '../../components/AppHeader/AppHeader';
+import MyTextInput from '../../components/MyTextInput/MyTextInput';
+import MyButton from '../../components/MyButton/MyButton';
 
-class LoginScreen extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      email: '',
-      password: '',
-    };
-  }
-
-  componentDidMount() {
-    LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
-  }
-
-  displayData = async () => {
-    try {
-      let user = await AsyncStorage.getItem('token');
-      alert(user);
-    } catch (error) {
-      alert(error);
-    }
-  };
-
-  render() {
-    return (
-      <View style={styles.viewLoginScreen}>
-        <ScrollView>
-          <Card>
-            <Card.Title title="Registration Form" />
-            <Card.Content>
-              <Formik
-                enableReinitialize={true}
-                initialValues={this.state}
-                onSubmit={(values, {resetForm}) => {
-                  let userData = {
-                    email: values.email,
-                    password: values.password,
-                  };
-                  fetch(API_URL + '/auth/loginUser', {
-                    method: 'POST',
-                    headers: {
-                      Accept: 'application/json',
-                      'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(userData),
-                  })
-                    .then((response) => response.json())
-                    .then((responseJson) => {
-                      Alert.alert(responseJson.message);
+const LoginScreen = (props) => {
+  return (
+    <View style={styles.viewLoginScreen}>
+      <AppHeader
+        headerTitle="Login"
+        leftIconMenu={false}
+        rightIconMenu={false}
+      />
+      <ScrollView>
+        <Card>
+          <Card.Title title="Login Form" />
+          <Card.Content>
+            <Formik
+              enableReinitialize={true}
+              initialValues={{email: '', password: ''}}
+              onSubmit={(values, {resetForm}) => {
+                let userData = {
+                  email: values.email,
+                  password: values.password,
+                };
+                loginUserService(userData)
+                  .then((responseData) => {
+                    if (responseData.token) {
+                      Alert.alert(responseData.message);
                       // console.log(responseJson)
                       resetForm({});
-                      AsyncStorage.setItem('token', responseJson.token);
+                      AsyncStorage.setItem('token', responseData.token);
                       AsyncStorage.setItem(
                         'authId',
-                        responseJson.authId.toString(),
+                        responseData.authId.toString(),
                       );
-                      this.props.navigation.navigate('welcome-home');
-                      this.componentDidMount();
-                    })
-                    .catch((error) => {
-                      console.error(error);
-                    });
-                }}
-                validationSchema={yup.object().shape({
-                  email: yup.string().required(),
-                  password: yup.string().required(),
-                })}>
-                {({
-                  handleChange,
-                  handleBlur,
-                  touched,
-                  errors,
-                  handleSubmit,
-                  values,
-                }) => (
+                      props.navigation.navigate('welcome-home');
+                    } else {
+                      console.log('error');
+                    }
+                  })
+                  .catch((error) => {
+                    console.error(error);
+                  });
+              }}
+              validationSchema={yup.object().shape({
+                email: yup.string().required(),
+                password: yup.string().required(),
+              })}>
+              {({
+                handleChange,
+                handleBlur,
+                touched,
+                errors,
+                handleSubmit,
+                values,
+              }) => (
+                <View>
                   <View>
-                    <View>
-                      <TextInput
-                        label="Email"
-                        onChangeText={handleChange('email')}
-                        onBlur={handleBlur('email')}
-                        value={values.email}
-                        mode="outlined"
-                        error={touched.email && errors.email ? true : false}
-                      />
-                      <HelperText
-                        type="error"
-                        visible={touched.email && errors.email ? true : false}>
-                        {errors.email}
-                      </HelperText>
-                    </View>
-
-                    <View>
-                      <TextInput
-                        label="Password"
-                        secureTextEntry={true}
-                        onChangeText={handleChange('password')}
-                        onBlur={handleBlur('password')}
-                        mode="outlined"
-                        value={values.password}
-                        error={
-                          touched.password && errors.password ? true : false
-                        }
-                      />
-                      <HelperText
-                        type="error"
-                        visible={
-                          touched.password && errors.password ? true : false
-                        }>
-                        {errors.password}
-                      </HelperText>
-                    </View>
-
-                    <Button
-                      onPress={handleSubmit}
-                      color="#3333ff"
-                      mode="contained">
-                      Login
-                    </Button>
-
-                    <Button
-                      style={styles.createNewAccountButtonLoginScreen}
-                      color="#3333ff"
-                      onPress={() =>
-                        this.props.navigation.navigate('register')
-                      }>
-                      Create A New Account
-                    </Button>
+                    <MyTextInput
+                      label="Email"
+                      onChangeText={handleChange('email')}
+                      onBlur={handleBlur('email')}
+                      value={values.email}
+                      mode="outlined"
+                      error={touched.email && errors.email ? true : false}
+                      errorName={errors.email}
+                    />
                   </View>
-                )}
-              </Formik>
-            </Card.Content>
-          </Card>
-        </ScrollView>
-      </View>
-    );
-  }
-}
+
+                  <View>
+                    <MyTextInput
+                      label="Password"
+                      secureTextEntry={true}
+                      onChangeText={handleChange('password')}
+                      onBlur={handleBlur('password')}
+                      mode="outlined"
+                      value={values.password}
+                      error={touched.password && errors.password ? true : false}
+                      errorName={errors.password}
+                    />
+                  </View>
+
+                  <MyButton
+                    onPress={handleSubmit}
+                    color="#3333ff"
+                    mode="contained"
+                    buttonTitle="Login"
+                  />
+
+                  <MyButton
+                    style={styles.createNewAccountButtonLoginScreen}
+                    color="#3333ff"
+                    onPress={() => props.navigation.navigate('register')}
+                    buttonTitle="Create A New Account"
+                  />
+                </View>
+              )}
+            </Formik>
+          </Card.Content>
+        </Card>
+      </ScrollView>
+    </View>
+  );
+};
 
 export default LoginScreen;

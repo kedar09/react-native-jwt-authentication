@@ -16,7 +16,7 @@ export const RootNavigator = () => {
         <Stack.Screen
           name="login"
           component={LoginScreen}
-          options={{title: 'Login'}}
+          options={{title: 'Login', headerShown: false}}
         />
         <Stack.Screen
           name="register"
