@@ -31,12 +31,12 @@ export const RootNavigator = () => {
         <Stack.Screen
           name="change-password"
           component={ChangePasswordScreen}
-          options={{title: 'Change Password'}}
+          options={{title: 'Change Password', headerShown: false}}
         />
         <Stack.Screen
           name="edit-profile"
           component={EditProfileScreen}
-          options={{title: 'Edit Profile'}}
+          options={{title: 'Edit Profile', headerShown: false}}
         />
       </Stack.Navigator>
     </NavigationContainer>

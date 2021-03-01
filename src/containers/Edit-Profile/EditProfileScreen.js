@@ -1,9 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useState, useEffect} from 'react';
-import {View, ScrollView, Alert} from 'react-native';
+import {View, ScrollView, Alert, TextInput} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 
-import {Card, Title, Divider} from 'react-native-paper';
+import {Card, Text, Title, Divider} from 'react-native-paper';
 
 import * as yup from 'yup';
 import {Formik} from 'formik';
@@ -16,8 +16,8 @@ import MyTextInput from '../../components/MyTextInput/MyTextInput';
 
 const EditProfileScreen = (props) => {
   const [state, setState] = useState({
-    userData: '',
-    phoneNumber: '',
+    email: '',
+    phoneNumber: 0,
     displayName: '',
   });
 
@@ -25,9 +25,14 @@ const EditProfileScreen = (props) => {
     try {
       getUserProfileDataService()
         .then((responseData) => {
-          console.log('userData' + responseData);
           if (responseData.length > 0) {
-            setState({...state, userData: responseData[0]});
+            setState({
+              ...state,
+              email: responseData[0].email,
+              phoneNumber: responseData[0].phoneNumber.toString(),
+              displayName: responseData[0].displayName,
+            });
+            console.log(responseData[0].displayName);
           } else {
             console.log('error');
           }
@@ -66,11 +71,12 @@ const EditProfileScreen = (props) => {
           <Card.Title title="User Profile" />
           <Divider />
           <Card.Content>
-            <Title>Email: {state.userData.email}</Title>
+            <Title>Email: {state.email}</Title>
             <Formik
               enableReinitialize={true}
               initialValues={state}
-              onSubmit={async (values, {resetForm}) => {
+              onSubmit={(values, {resetForm}) => {
+                console.log(values);
                 updateUserProfileDataService(values)
                   .then((responseData) => {
                     if (responseData.message) {
@@ -107,19 +113,17 @@ const EditProfileScreen = (props) => {
                       label="Name"
                       onChangeText={handleChange('displayName')}
                       onBlur={handleBlur('displayName')}
-                      mode="outlined"
                       value={values.displayName}
+                      mode="outlined"
                       error={
                         touched.displayName && errors.displayName ? true : false
                       }
                       errorName={errors.displayName}
                     />
                   </View>
-
                   <View>
                     <MyTextInput
                       label="Mobile Number"
-                      keyboardType="numeric"
                       onChangeText={handleChange('phoneNumber')}
                       onBlur={handleBlur('phoneNumber')}
                       mode="outlined"
@@ -127,6 +131,7 @@ const EditProfileScreen = (props) => {
                       error={
                         touched.phoneNumber && errors.phoneNumber ? true : false
                       }
+                      keyboardType="numeric"
                       errorName={errors.phoneNumber}
                     />
                   </View>

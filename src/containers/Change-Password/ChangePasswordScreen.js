@@ -30,7 +30,7 @@ class ChangePasswordScreen extends Component {
     try {
       let token = await AsyncStorage.getItem('token');
       let authId = await AsyncStorage.getItem('authId');
-      authId = parseInt(authId);
+      authId = authId;
       console.log(authId);
       return fetch('http://172.17.0.1:3001/users/getUserProfile', {
         method: 'POST',
@@ -87,7 +87,7 @@ class ChangePasswordScreen extends Component {
                   try {
                     let token = await AsyncStorage.getItem('token');
                     let authId = await AsyncStorage.getItem('authId');
-                    authId = parseInt(authId);
+                    authId = authId;
                     console.log(authId);
                     return fetch(
                       'http://172.17.0.1:3001/users/updateUserPassword',

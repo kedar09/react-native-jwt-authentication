@@ -5,10 +5,12 @@ const MyTextInput = (props) => {
   return (
     <>
       <TextInput
+        secureTextEntry={props.secureTextEntry}
         label={props.label}
         onChangeText={props.onChangeText}
         onBlur={props.onBlur}
-        value={props.values}
+        value={props.value}
+        keyboardType={props.keyboardType}
         mode={props.mode}
         error={props.error}
       />

@@ -38,7 +38,7 @@ export const updateUserProfileDataService = async (values) => {
       },
       body: JSON.stringify({
         authId: authId,
-        phoneNumber: parseInt(values.phoneNumber),
+        phoneNumber: +values.phoneNumber,
         displayName: values.displayName,
       }),
     });
