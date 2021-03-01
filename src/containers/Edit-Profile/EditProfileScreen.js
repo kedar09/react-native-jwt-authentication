@@ -1,61 +1,36 @@
-import React, {Component} from 'react';
-import {View, ScrollView, LogBox, Alert} from 'react-native';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, {useState, useEffect} from 'react';
+import {View, ScrollView, Alert} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 
-import {
-  Button,
-  Card,
-  Title,
-  Divider,
-  Text,
-  TextInput,
-  HelperText,
-} from 'react-native-paper';
+import {Card, Title, Divider} from 'react-native-paper';
 
 import * as yup from 'yup';
 import {Formik} from 'formik';
 import styles from './edit-profile-screen.css';
+import {getUserProfileDataService} from '../../services/user/user.services';
+import {updateUserProfileDataService} from '../../services/user/user.services';
+import MyButton from '../../components/MyButton/MyButton';
+import AppHeader from '../../components/AppHeader/AppHeader';
+import MyTextInput from '../../components/MyTextInput/MyTextInput';
 
-class EditProfileScreen extends Component {
-  constructor(props) {
-    super(props);
-    // let userData = this.props.navigation.state.params.userData;
-    this.state = {
-      userData: '',
-      phoneNumber: '',
-      displayName: '',
-    };
-  }
+const EditProfileScreen = (props) => {
+  const [state, setState] = useState({
+    userData: '',
+    phoneNumber: '',
+    displayName: '',
+  });
 
-  async componentDidMount() {
-    LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
+  const getUserProfileData = async () => {
     try {
-      let token = await AsyncStorage.getItem('token');
-      let authId = await AsyncStorage.getItem('authId');
-      authId = parseInt(authId);
-      console.log(authId);
-      return fetch('http://172.17.0.1:3001/users/getUserProfile', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({authId: authId}),
-      })
-        .then((response) => response.json())
-        .then((responseJson) => {
-          console.log(responseJson);
-          this.setState(
-            {
-              userData: responseJson[0],
-              phoneNumber: responseJson[0].phoneNumber.toString(),
-              displayName: responseJson[0].displayName,
-            },
-            function () {
-              // In this block you can do something with new state.
-            },
-          );
+      getUserProfileDataService()
+        .then((responseData) => {
+          console.log('userData' + responseData);
+          if (responseData.length > 0) {
+            setState({...state, userData: responseData[0]});
+          } else {
+            console.log('error');
+          }
         })
         .catch((error) => {
           console.error(error);
@@ -63,160 +38,125 @@ class EditProfileScreen extends Component {
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
-  logOut = async () => {
+  useEffect(() => {
+    getUserProfileData();
+  }, []);
+
+  const logOut = async () => {
     try {
       await AsyncStorage.removeItem('token');
       await AsyncStorage.removeItem('authId');
-      this.props.navigation.navigate('login');
+      props.navigation.navigate('login');
     } catch (error) {
-      // Error saving data
+      console.log(error);
     }
   };
 
-  render() {
-    return (
-      <View style={styles.viewEditProfileScreen}>
-        <ScrollView>
-          <Card>
-            <Card.Title title="User Profile" />
-            <Divider />
-            <Card.Content>
-              <Title>Email: {this.state.userData.email}</Title>
-              <Formik
-                enableReinitialize={true}
-                initialValues={this.state}
-                onSubmit={async (values, {resetForm}) => {
-                  try {
-                    let token = await AsyncStorage.getItem('token');
-                    let authId = await AsyncStorage.getItem('authId');
-                    authId = parseInt(authId);
-                    console.log(authId);
-                    return fetch(
-                      'http://172.17.0.1:3001/users/updateUserProfile',
-                      {
-                        method: 'PUT',
-                        headers: {
-                          Accept: 'application/json',
-                          Authorization: `Bearer ${token}`,
-                          'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                          authId: authId,
-                          phoneNumber: parseInt(values.phoneNumber),
-                          displayName: values.displayName,
-                        }),
-                      },
-                    )
-                      .then((response) => response.json())
-                      .then((responseJson) => {
-                        Alert.alert(responseJson.message);
-                        // console.log(responseJson)
-                        resetForm({});
-                        this.props.navigation.navigate('welcome-home');
-                        this.componentDidMount();
-                      })
-                      .catch((error) => {
-                        console.error(error);
-                      });
-                  } catch (error) {
-                    console.log(error);
-                  }
-                }}
-                validationSchema={yup.object().shape({
-                  displayName: yup.string(),
-                  // .required(),
-                  phoneNumber: yup.number(),
-                  // .required(),
-                })}>
-                {({
-                  handleChange,
-                  handleBlur,
-                  touched,
-                  errors,
-                  handleSubmit,
-                  values,
-                }) => (
+  return (
+    <View style={styles.viewEditProfileScreen}>
+      <AppHeader
+        headerTitle="Edit Profile"
+        leftIconMenu={false}
+        rightIconMenu={false}
+      />
+      <ScrollView>
+        <Card>
+          <Card.Title title="User Profile" />
+          <Divider />
+          <Card.Content>
+            <Title>Email: {state.userData.email}</Title>
+            <Formik
+              enableReinitialize={true}
+              initialValues={state}
+              onSubmit={async (values, {resetForm}) => {
+                updateUserProfileDataService(values)
+                  .then((responseData) => {
+                    if (responseData.message) {
+                      Alert.alert(responseData.message);
+                      // console.log(responseJson)
+                      resetForm({});
+
+                      props.navigation.navigate('welcome-home');
+                    } else {
+                      console.log('error');
+                    }
+                  })
+                  .catch((error) => {
+                    console.error(error);
+                  });
+              }}
+              validationSchema={yup.object().shape({
+                displayName: yup.string(),
+                // .required(),
+                phoneNumber: yup.number(),
+                // .required(),
+              })}>
+              {({
+                handleChange,
+                handleBlur,
+                touched,
+                errors,
+                handleSubmit,
+                values,
+              }) => (
+                <View>
                   <View>
-                    <View>
-                      <TextInput
-                        label="Name"
-                        onChangeText={handleChange('displayName')}
-                        onBlur={handleBlur('displayName')}
-                        mode="outlined"
-                        value={values.displayName}
-                        error={
-                          touched.displayName && errors.displayName
-                            ? true
-                            : false
-                        }
-                      />
-                      <HelperText
-                        type="error"
-                        visible={
-                          touched.displayName && errors.displayName
-                            ? true
-                            : false
-                        }>
-                        {errors.displayName}
-                      </HelperText>
-                    </View>
-
-                    <View>
-                      <TextInput
-                        label="Mobile Number"
-                        keyboardType="numeric"
-                        onChangeText={handleChange('phoneNumber')}
-                        onBlur={handleBlur('phoneNumber')}
-                        mode="outlined"
-                        value={values.phoneNumber}
-                        error={
-                          touched.phoneNumber && errors.phoneNumber
-                            ? true
-                            : false
-                        }
-                      />
-                      <HelperText
-                        type="error"
-                        visible={
-                          touched.phoneNumber && errors.phoneNumber
-                            ? true
-                            : false
-                        }>
-                        {errors.phoneNumber}
-                      </HelperText>
-                    </View>
-
-                    <Button
-                      onPress={handleSubmit}
-                      color="#3333ff"
-                      mode="contained">
-                      Save Profile
-                    </Button>
-                    <Button
-                      style={{marginTop: 10}}
-                      color="#3333ff"
-                      onPress={() =>
-                        this.props.navigation.navigate('welcome-home')
-                      }>
-                      Return to home
-                    </Button>
+                    <MyTextInput
+                      label="Name"
+                      onChangeText={handleChange('displayName')}
+                      onBlur={handleBlur('displayName')}
+                      mode="outlined"
+                      value={values.displayName}
+                      error={
+                        touched.displayName && errors.displayName ? true : false
+                      }
+                      errorName={errors.displayName}
+                    />
                   </View>
-                )}
-              </Formik>
-            </Card.Content>
-          </Card>
-          <Button
-            style={{marginTop: 20}}
-            onPress={() => this.logOut()}
-            mode="contained">
-            Log Out
-          </Button>
-        </ScrollView>
-      </View>
-    );
-  }
-}
+
+                  <View>
+                    <MyTextInput
+                      label="Mobile Number"
+                      keyboardType="numeric"
+                      onChangeText={handleChange('phoneNumber')}
+                      onBlur={handleBlur('phoneNumber')}
+                      mode="outlined"
+                      value={values.phoneNumber}
+                      error={
+                        touched.phoneNumber && errors.phoneNumber ? true : false
+                      }
+                      errorName={errors.phoneNumber}
+                    />
+                  </View>
+
+                  <MyButton
+                    onPress={handleSubmit}
+                    color="#3333ff"
+                    mode="contained"
+                    buttonTitle="Save Profile"
+                  />
+                  <MyButton
+                    style={{marginTop: 10}}
+                    color="#3333ff"
+                    onPress={() => props.navigation.navigate('welcome-home')}
+                    buttonTitle="Return to home"
+                  />
+                </View>
+              )}
+            </Formik>
+          </Card.Content>
+        </Card>
+        <MyButton
+          style={{marginTop: 20}}
+          onPress={() => logOut()}
+          mode="contained"
+          buttonTitle="Log Out"
+        />
+      </ScrollView>
+    </View>
+  );
+};
 
 export default EditProfileScreen;
