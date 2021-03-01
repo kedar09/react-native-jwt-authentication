@@ -50,3 +50,29 @@ export const updateUserProfileDataService = async (values) => {
     return error;
   }
 };
+
+export const updateUserPasswordDataService = async (values) => {
+  let token = await AsyncStorage.getItem('token');
+  let authId = await AsyncStorage.getItem('authId');
+
+  try {
+    const response = await fetch(API_URL + '/users/updateUserPassword', {
+      method: 'PUT',
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        authId: authId,
+        password: values.password,
+      }),
+    });
+    const responseJson = await response.json();
+    // console.log('response object:', responseJson);
+    return responseJson;
+  } catch (error) {
+    console.log('Request failed, Please try again!');
+    return error;
+  }
+};

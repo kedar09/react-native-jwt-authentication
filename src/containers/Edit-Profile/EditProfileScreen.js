@@ -76,7 +76,6 @@ const EditProfileScreen = (props) => {
               enableReinitialize={true}
               initialValues={state}
               onSubmit={(values, {resetForm}) => {
-                console.log(values);
                 updateUserProfileDataService(values)
                   .then((responseData) => {
                     if (responseData.message) {
