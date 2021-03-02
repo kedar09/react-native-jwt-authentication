@@ -49,14 +49,17 @@ const HomeScreen = (props) => {
   return (
     <View style={styles.viewHomeScreen}>
       <AppHeader
-        headerTitle="Home"
+        headerTitle={state.userData.displayName}
         leftIconMenu={false}
         rightIconMenu={false}
       />
 
       <ScrollView>
         <Card>
-          <Card.Title title="User Information" />
+          <Card.Title
+            titleStyle={{color: '#28666E'}}
+            title="User Information"
+          />
           <Divider />
           <Card.Content>
             <Text>Name: {state.userData.displayName}</Text>
@@ -65,13 +68,21 @@ const HomeScreen = (props) => {
             <MyButton
               style={styles.buttonHomeScreen}
               color="#00A7E1"
-              onPress={() => props.navigation.navigate('edit-profile')}
+              onPress={() =>
+                props.navigation.navigate('edit-profile', {
+                  displayName: state.userData.displayName,
+                })
+              }
               buttonTitle="Edit Profile"
             />
             <MyButton
               style={styles.buttonHomeScreen}
               color="#00A7E1"
-              onPress={() => props.navigation.navigate('change-password')}
+              onPress={() =>
+                props.navigation.navigate('change-password', {
+                  displayName: state.userData.displayName,
+                })
+              }
               buttonTitle="Change Password"
             />
           </Card.Content>

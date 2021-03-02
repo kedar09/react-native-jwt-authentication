@@ -32,13 +32,13 @@ const LoginScreen = (props) => {
   return (
     <View style={styles.viewLoginScreen}>
       <AppHeader
-        headerTitle="Login"
+        headerTitle="KEDAR09"
         leftIconMenu={false}
         rightIconMenu={false}
       />
       <ScrollView>
         <Card>
-          <Card.Title title="Login Form" />
+          <Card.Title titleStyle={{color: '#28666E'}} title="Sign In" />
           <Card.Content>
             <Formik
               enableReinitialize={true}

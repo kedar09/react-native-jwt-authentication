@@ -43,7 +43,7 @@ const RegisterScreen = (props) => {
       />
       <ScrollView>
         <Card>
-          <Card.Title title="Registration Form" />
+          <Card.Title titleStyle={{color: '#28666E'}} title="Sign Up" />
           <Card.Content>
             <Formik
               enableReinitialize={true}

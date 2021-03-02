@@ -61,13 +61,13 @@ const EditProfileScreen = (props) => {
   return (
     <View style={styles.viewEditProfileScreen}>
       <AppHeader
-        headerTitle="Edit Profile"
+        headerTitle={props.route.params.displayName}
         leftIconMenu={false}
         rightIconMenu={false}
       />
       <ScrollView>
         <Card>
-          <Card.Title title="User Profile" />
+          <Card.Title titleStyle={{color: '#28666E'}} title="User Profile" />
           <Divider />
           <Card.Content>
             <Title>Email: {state.email}</Title>

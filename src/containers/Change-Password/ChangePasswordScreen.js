@@ -70,13 +70,16 @@ const ChangePasswordScreen = (props) => {
   return (
     <View style={styles.viewChangePasswordScreen}>
       <AppHeader
-        headerTitle="Update Password"
+        headerTitle={props.route.params.displayName}
         leftIconMenu={false}
         rightIconMenu={false}
       />
       <ScrollView>
         <Card>
-          <Card.Title title="User Password" />
+          <Card.Title
+            titleStyle={{color: '#28666E'}}
+            title="Set New Password"
+          />
           <Divider />
           <Card.Content>
             <Title>Name: {state.userData.displayName}</Title>
