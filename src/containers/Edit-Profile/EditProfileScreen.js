@@ -32,7 +32,6 @@ const EditProfileScreen = (props) => {
               phoneNumber: responseData[0].phoneNumber,
               displayName: responseData[0].displayName,
             });
-            console.log(responseData[0].displayName);
           } else {
             console.log('error');
           }
@@ -126,7 +125,7 @@ const EditProfileScreen = (props) => {
                       onChangeText={handleChange('phoneNumber')}
                       onBlur={handleBlur('phoneNumber')}
                       mode="outlined"
-                      value={values.phoneNumber}
+                      value={values.phoneNumber.toString()}
                       error={
                         touched.phoneNumber && errors.phoneNumber ? true : false
                       }

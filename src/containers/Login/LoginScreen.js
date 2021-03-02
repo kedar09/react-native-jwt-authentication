@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useState, useCallback} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {View, Alert, ScrollView} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 
@@ -20,6 +20,14 @@ const LoginScreen = (props) => {
       setState({...state, email: '', password: ''});
     }, []),
   );
+
+  useEffect(() => {
+    AsyncStorage.getItem('token').then((userToken) => {
+      if (userToken) {
+        props.navigation.navigate('welcome-home');
+      }
+    });
+  }, []);
 
   return (
     <View style={styles.viewLoginScreen}>
