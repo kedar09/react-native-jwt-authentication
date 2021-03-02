@@ -4,7 +4,7 @@ import {Appbar} from 'react-native-paper';
 const AppHeader = (props) => {
   return (
     <>
-      <Appbar.Header>
+      <Appbar.Header style={{backgroundColor: '#0C090D'}}>
         {props.leftIconMenu ? <Appbar.BackAction /> : null}
         <Appbar.Content
           title={props.headerTitle}

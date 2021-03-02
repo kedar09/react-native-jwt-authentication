@@ -1,4 +1,5 @@
-import React from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, {useState, useCallback} from 'react';
 import {View, Alert, ScrollView} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 
@@ -10,8 +11,16 @@ import {loginUserService} from '../../services/authentication/authentication.ser
 import AppHeader from '../../components/AppHeader/AppHeader';
 import MyTextInput from '../../components/MyTextInput/MyTextInput';
 import MyButton from '../../components/MyButton/MyButton';
+import {useFocusEffect} from '@react-navigation/native';
 
 const LoginScreen = (props) => {
+  const [state, setState] = useState({email: '', password: ''});
+  useFocusEffect(
+    useCallback(() => {
+      setState({...state, email: '', password: ''});
+    }, []),
+  );
+
   return (
     <View style={styles.viewLoginScreen}>
       <AppHeader
@@ -25,7 +34,7 @@ const LoginScreen = (props) => {
           <Card.Content>
             <Formik
               enableReinitialize={true}
-              initialValues={{email: '', password: ''}}
+              initialValues={state}
               onSubmit={(values, {resetForm}) => {
                 let userData = {
                   email: values.email,
@@ -90,15 +99,16 @@ const LoginScreen = (props) => {
                   </View>
 
                   <MyButton
+                    labelStyle={{color: '#E01A4F'}}
+                    color="#0C090D"
                     onPress={handleSubmit}
-                    color="#3333ff"
                     mode="contained"
                     buttonTitle="Login"
                   />
 
                   <MyButton
                     style={styles.createNewAccountButtonLoginScreen}
-                    color="#3333ff"
+                    color="#00A7E1"
                     onPress={() => props.navigation.navigate('register')}
                     buttonTitle="Create A New Account"
                   />

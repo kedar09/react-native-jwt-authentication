@@ -1,4 +1,5 @@
-import React from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, {useState, useCallback} from 'react';
 import {View, Alert, ScrollView} from 'react-native';
 
 import AsyncStorage from '@react-native-community/async-storage';
@@ -10,8 +11,29 @@ import MyButton from '../../components/MyButton/MyButton';
 import AppHeader from '../../components/AppHeader/AppHeader';
 import MyTextInput from '../../components/MyTextInput/MyTextInput';
 import {registerUserService} from '../../services/authentication/authentication.services';
+import {useFocusEffect} from '@react-navigation/native';
 
 const RegisterScreen = (props) => {
+  const [state, setState] = useState({
+    email: '',
+    displayName: '',
+    password: '',
+    confirmPassword: '',
+    phoneNumber: '',
+  });
+  useFocusEffect(
+    useCallback(() => {
+      setState({
+        ...state,
+        email: '',
+        displayName: '',
+        password: '',
+        confirmPassword: '',
+        phoneNumber: '',
+      });
+    }, []),
+  );
+
   return (
     <View style={styles.viewRegisterScreen}>
       <AppHeader
@@ -154,13 +176,14 @@ const RegisterScreen = (props) => {
 
                   <MyButton
                     onPress={handleSubmit}
-                    color="#3333ff"
+                    labelStyle={{color: '#E01A4F'}}
+                    color="#0C090D"
                     mode="contained"
                     buttonTitle="Register"
                   />
                   <MyButton
                     style={{marginTop: 10}}
-                    color="#3333ff"
+                    color="#00A7E1"
                     onPress={() => props.navigation.navigate('login')}
                     buttonTitle="Go to login"
                   />

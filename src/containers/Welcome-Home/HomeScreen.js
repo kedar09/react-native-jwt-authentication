@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {useState, useEffect} from 'react';
 import {View, ScrollView} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -7,10 +8,11 @@ import styles from './home-screen.css';
 import MyButton from '../../components/MyButton/MyButton';
 import {getUserProfileDataService} from '../../services/user/user.services';
 import AppHeader from '../../components/AppHeader/AppHeader';
+import {useIsFocused} from '@react-navigation/native';
 
 const HomeScreen = (props) => {
   const [state, setState] = useState({userData: ''});
-
+  const isFocused = useIsFocused();
   const getUserProfileData = async () => {
     try {
       getUserProfileDataService()
@@ -32,8 +34,7 @@ const HomeScreen = (props) => {
 
   useEffect(() => {
     getUserProfileData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isFocused]);
 
   const logOut = async () => {
     try {
@@ -63,11 +64,13 @@ const HomeScreen = (props) => {
             <Text>Phone Number: {state.userData.phoneNumber}</Text>
             <MyButton
               style={styles.buttonHomeScreen}
+              color="#00A7E1"
               onPress={() => props.navigation.navigate('edit-profile')}
               buttonTitle="Edit Profile"
             />
             <MyButton
               style={styles.buttonHomeScreen}
+              color="#00A7E1"
               onPress={() => props.navigation.navigate('change-password')}
               buttonTitle="Change Password"
             />
@@ -76,6 +79,8 @@ const HomeScreen = (props) => {
         <MyButton
           style={styles.buttonHomeScreen}
           onPress={() => logOut()}
+          labelStyle={{color: '#E01A4F'}}
+          color="#0C090D"
           mode="contained"
           buttonTitle="Log Out"
         />

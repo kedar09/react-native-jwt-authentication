@@ -12,7 +12,10 @@ const MyTextInput = (props) => {
         value={props.value}
         keyboardType={props.keyboardType}
         mode={props.mode}
+        selectionColor="green"
         error={props.error}
+        // style={{borderColor: '#0C090D'}}
+        theme={{colors: {text: '#28262C', primary: '#6184D8'}}}
       />
       <HelperText type="error" visible={props.error}>
         {props.errorName}

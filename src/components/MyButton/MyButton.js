@@ -5,6 +5,7 @@ const MyButton = (props) => {
   return (
     <>
       <Button
+        labelStyle={props.labelStyle}
         style={props.style}
         onPress={props.onPress}
         color={props.color}

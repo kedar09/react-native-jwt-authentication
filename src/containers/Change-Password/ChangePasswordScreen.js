@@ -14,7 +14,10 @@ import {
 import * as yup from 'yup';
 import {Formik} from 'formik';
 import styles from './change-password-screen.css';
-import {getUserProfileDataService, updateUserPasswordDataService} from '../../services/user/user.services';
+import {
+  getUserProfileDataService,
+  updateUserPasswordDataService,
+} from '../../services/user/user.services';
 import MyButton from '../../components/MyButton/MyButton';
 import MyTextInput from '../../components/MyTextInput/MyTextInput';
 import AppHeader from '../../components/AppHeader/AppHeader';
@@ -147,13 +150,14 @@ const ChangePasswordScreen = (props) => {
 
                   <MyButton
                     onPress={handleSubmit}
-                    color="#3333ff"
+                    labelStyle={{color: '#E01A4F'}}
+                    color="#0C090D"
                     mode="contained"
                     buttonTitle="Save Password"
                   />
                   <MyButton
                     style={{marginTop: 10}}
-                    color="#3333ff"
+                    color="#00A7E1"
                     onPress={() => props.navigation.navigate('welcome-home')}
                     buttonTitle="Return to home"
                   />
@@ -165,6 +169,8 @@ const ChangePasswordScreen = (props) => {
         <MyButton
           style={{marginTop: 20}}
           onPress={() => logOut()}
+          labelStyle={{color: '#E01A4F'}}
+          color="#0C090D"
           mode="contained"
           buttonTitle="Log Out"
         />

@@ -29,7 +29,7 @@ const EditProfileScreen = (props) => {
             setState({
               ...state,
               email: responseData[0].email,
-              phoneNumber: responseData[0].phoneNumber.toString(),
+              phoneNumber: responseData[0].phoneNumber,
               displayName: responseData[0].displayName,
             });
             console.log(responseData[0].displayName);
@@ -137,13 +137,14 @@ const EditProfileScreen = (props) => {
 
                   <MyButton
                     onPress={handleSubmit}
-                    color="#3333ff"
+                    labelStyle={{color: '#E01A4F'}}
+                    color="#0C090D"
                     mode="contained"
                     buttonTitle="Save Profile"
                   />
                   <MyButton
                     style={{marginTop: 10}}
-                    color="#3333ff"
+                    color="#00A7E1"
                     onPress={() => props.navigation.navigate('welcome-home')}
                     buttonTitle="Return to home"
                   />
@@ -155,6 +156,8 @@ const EditProfileScreen = (props) => {
         <MyButton
           style={{marginTop: 20}}
           onPress={() => logOut()}
+          labelStyle={{color: '#E01A4F'}}
+          color="#0C090D"
           mode="contained"
           buttonTitle="Log Out"
         />
