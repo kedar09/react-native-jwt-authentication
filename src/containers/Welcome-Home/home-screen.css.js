@@ -7,4 +7,8 @@ export default StyleSheet.create({
     // padding: 20,
   },
   buttonHomeScreen: {marginTop: 20, marginHorizontal: 20},
+  cardTitleStyleHomeScreen: {
+    color: '#28666E',
+    fontFamily: 'Courgette-Regular',
+  },
 });

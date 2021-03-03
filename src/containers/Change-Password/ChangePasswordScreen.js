@@ -77,7 +77,7 @@ const ChangePasswordScreen = (props) => {
       <ScrollView>
         <Card>
           <Card.Title
-            titleStyle={{color: '#28666E'}}
+            titleStyle={styles.cardTitleStyleChangePasswordScreen}
             title="Set New Password"
           />
           <Divider />

@@ -7,6 +7,7 @@ const AppHeader = (props) => {
       <Appbar.Header style={{backgroundColor: '#0C090D'}}>
         {props.leftIconMenu ? <Appbar.BackAction /> : null}
         <Appbar.Content
+          titleStyle={{fontFamily: 'PermanentMarker-Regular', fontSize: 24}}
           title={props.headerTitle}
           subtitle={props.headerSubTitle}
         />

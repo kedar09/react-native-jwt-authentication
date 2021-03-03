@@ -57,7 +57,7 @@ const HomeScreen = (props) => {
       <ScrollView>
         <Card>
           <Card.Title
-            titleStyle={{color: '#28666E'}}
+            titleStyle={styles.cardTitleStyleHomeScreen}
             title="User Information"
           />
           <Divider />

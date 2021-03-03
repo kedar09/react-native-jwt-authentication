@@ -67,7 +67,10 @@ const EditProfileScreen = (props) => {
       />
       <ScrollView>
         <Card>
-          <Card.Title titleStyle={{color: '#28666E'}} title="User Profile" />
+          <Card.Title
+            titleStyle={styles.cardTitleStyleEditScreen}
+            title="User Profile"
+          />
           <Divider />
           <Card.Content>
             <Title>Email: {state.email}</Title>

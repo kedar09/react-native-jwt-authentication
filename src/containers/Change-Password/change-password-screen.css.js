@@ -6,4 +6,8 @@ export default StyleSheet.create({
     // alignItems: 'stretch',
     // padding: 20,
   },
+  cardTitleStyleChangePasswordScreen: {
+    color: '#28666E',
+    fontFamily: 'Courgette-Regular',
+  },
 });

@@ -38,7 +38,10 @@ const LoginScreen = (props) => {
       />
       <ScrollView>
         <Card>
-          <Card.Title titleStyle={{color: '#28666E'}} title="Sign In" />
+          <Card.Title
+            titleStyle={styles.cardTitleStyleLoginScreen}
+            title="Sign In"
+          />
           <Card.Content>
             <Formik
               enableReinitialize={true}
