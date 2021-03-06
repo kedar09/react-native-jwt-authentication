@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useState, useEffect, useCallback} from 'react';
-import {View, Alert, ScrollView} from 'react-native';
+import {View, Alert, ScrollView, Linking} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 
 import * as yup from 'yup';
@@ -34,7 +34,7 @@ const LoginScreen = (props) => {
       <AppHeader
         headerTitle="KEDAR09"
         leftIconMenu={false}
-        rightIconMenu={false}
+        rightIconMenu={true}
       />
       <ScrollView>
         <Card>
@@ -42,6 +42,7 @@ const LoginScreen = (props) => {
             titleStyle={styles.cardTitleStyleLoginScreen}
             title="Sign In"
           />
+
           <Card.Content>
             <Formik
               enableReinitialize={true}

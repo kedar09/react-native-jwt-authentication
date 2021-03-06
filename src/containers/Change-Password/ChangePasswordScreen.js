@@ -82,7 +82,7 @@ const ChangePasswordScreen = (props) => {
           />
           <Divider />
           <Card.Content>
-            <Title>Name: {state.userData.displayName}</Title>
+            <Title>Name: {props.route.params.displayName}</Title>
             <Formik
               enableReinitialize={true}
               initialValues={state}

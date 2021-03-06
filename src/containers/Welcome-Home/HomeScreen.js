@@ -62,9 +62,20 @@ const HomeScreen = (props) => {
           />
           <Divider />
           <Card.Content>
-            <Text>Name: {state.userData.displayName}</Text>
-            <Text>Email: {state.userData.email}</Text>
-            <Text>Phone Number: {state.userData.phoneNumber}</Text>
+            <View style={{marginVertical: 10}}>
+              <Text style={styles.textOne}>
+                Name:-
+                <Text>{state.userData.displayName}</Text>
+              </Text>
+              <Text style={styles.textOne}>
+                Email:-
+                <Text>{state.userData.email}</Text>
+              </Text>
+              <Text style={styles.textOne}>
+                Phone Number:-
+                <Text>{state.userData.phoneNumber}</Text>
+              </Text>
+            </View>
             <MyButton
               style={styles.buttonHomeScreen}
               color="#00A7E1"

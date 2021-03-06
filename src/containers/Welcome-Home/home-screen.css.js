@@ -11,4 +11,5 @@ export default StyleSheet.create({
     color: '#28666E',
     fontFamily: 'Courgette-Regular',
   },
+  textOne: {fontWeight: 'bold', fontSize: 16, marginVertical: 5},
 });
