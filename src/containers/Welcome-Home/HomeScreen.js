@@ -10,6 +10,8 @@ import {getUserProfileDataService} from '../../services/user/user.services';
 import AppHeader from '../../components/AppHeader/AppHeader';
 import {useIsFocused} from '@react-navigation/native';
 
+import Toast from 'react-native-toast-message';
+
 const HomeScreen = (props) => {
   const [state, setState] = useState({userData: ''});
   const isFocused = useIsFocused();
@@ -20,7 +22,22 @@ const HomeScreen = (props) => {
           console.log('userData' + responseData);
           if (responseData.length > 0) {
             setState({...state, userData: responseData[0]});
+          } else if (responseData.error) {
+            Toast.show({
+              type: 'error',
+              position: 'bottom',
+              text1: responseData.error,
+              visibilityTime: 3000,
+              autoHide: true,
+            });
           } else {
+            Toast.show({
+              type: 'error',
+              position: 'bottom',
+              text1: responseData.message,
+              visibilityTime: 3000,
+              autoHide: true,
+            });
             console.log('error');
           }
         })

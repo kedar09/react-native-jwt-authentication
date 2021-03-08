@@ -1,9 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useState, useEffect} from 'react';
-import {View, ScrollView, Alert, TextInput} from 'react-native';
+import {View, ScrollView} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 
-import {Card, Text, Title, Divider} from 'react-native-paper';
+import {Card, Title, Divider} from 'react-native-paper';
 
 import * as yup from 'yup';
 import {Formik} from 'formik';
@@ -13,6 +13,7 @@ import {updateUserProfileDataService} from '../../services/user/user.services';
 import MyButton from '../../components/MyButton/MyButton';
 import AppHeader from '../../components/AppHeader/AppHeader';
 import MyTextInput from '../../components/MyTextInput/MyTextInput';
+import Toast from 'react-native-toast-message';
 
 const EditProfileScreen = (props) => {
   const [state, setState] = useState({
@@ -32,7 +33,23 @@ const EditProfileScreen = (props) => {
               phoneNumber: responseData[0].phoneNumber,
               displayName: responseData[0].displayName,
             });
+          } else if (responseData.error) {
+            Toast.show({
+              type: 'error',
+              position: 'bottom',
+              text1: responseData.error,
+              visibilityTime: 3000,
+              autoHide: true,
+            });
           } else {
+            Toast.show({
+              type: 'error',
+              position: 'bottom',
+              text1: responseData.message,
+              visibilityTime: 3000,
+              autoHide: true,
+            });
+
             console.log('error');
           }
         })
@@ -73,7 +90,7 @@ const EditProfileScreen = (props) => {
           />
           <Divider />
           <Card.Content>
-            <Title>Email: {state.email}</Title>
+            <Title style={{marginVertical: 10}}>Email: {state.email}</Title>
             <Formik
               enableReinitialize={true}
               initialValues={state}
@@ -81,12 +98,31 @@ const EditProfileScreen = (props) => {
                 updateUserProfileDataService(values)
                   .then((responseData) => {
                     if (responseData.message) {
-                      Alert.alert(responseData.message);
-                      // console.log(responseJson)
+                      Toast.show({
+                        type: 'success',
+                        position: 'bottom',
+                        text1: responseData.message,
+                        visibilityTime: 3000,
+                        autoHide: true,
+                      });
                       resetForm({});
-
                       props.navigation.navigate('welcome-home');
+                    } else if (responseData.error) {
+                      Toast.show({
+                        type: 'error',
+                        position: 'bottom',
+                        text1: responseData.error,
+                        visibilityTime: 3000,
+                        autoHide: true,
+                      });
                     } else {
+                      Toast.show({
+                        type: 'error',
+                        position: 'bottom',
+                        text1: responseData.message,
+                        visibilityTime: 3000,
+                        autoHide: true,
+                      });
                       console.log('error');
                     }
                   })
@@ -139,16 +175,16 @@ const EditProfileScreen = (props) => {
 
                   <MyButton
                     onPress={handleSubmit}
-                    labelStyle={{color: '#E01A4F'}}
+                    // labelStyle={{color: '#E01A4F'}}
                     color="#0C090D"
-                    mode="contained"
+                    // mode="contained"
                     buttonTitle="Save Profile"
                   />
                   <MyButton
                     style={{marginTop: 10}}
-                    color="#00A7E1"
+                    color="#E01A4F"
                     onPress={() => props.navigation.navigate('welcome-home')}
-                    buttonTitle="Return to home"
+                    buttonTitle="Cancel"
                   />
                 </View>
               )}
@@ -156,7 +192,7 @@ const EditProfileScreen = (props) => {
           </Card.Content>
         </Card>
         <MyButton
-          style={{marginTop: 20}}
+          style={{marginTop: 20, marginHorizontal: 10}}
           onPress={() => logOut()}
           labelStyle={{color: '#E01A4F'}}
           color="#0C090D"

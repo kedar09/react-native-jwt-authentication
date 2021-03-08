@@ -11,15 +11,18 @@ import {loginUserService} from '../../services/authentication/authentication.ser
 import AppHeader from '../../components/AppHeader/AppHeader';
 import MyTextInput from '../../components/MyTextInput/MyTextInput';
 import MyButton from '../../components/MyButton/MyButton';
-import {useFocusEffect} from '@react-navigation/native';
+import {useIsFocused} from '@react-navigation/native';
+
+import Toast from 'react-native-toast-message';
 
 const LoginScreen = (props) => {
+  const isFocused = useIsFocused;
   const [state, setState] = useState({email: '', password: ''});
-  useFocusEffect(
-    useCallback(() => {
-      setState({...state, email: '', password: ''});
-    }, []),
-  );
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     setState({...state, email: '', password: ''});
+  //   }, []),
+  // );
 
   useEffect(() => {
     AsyncStorage.getItem('token').then((userToken) => {
@@ -28,6 +31,10 @@ const LoginScreen = (props) => {
       }
     });
   }, []);
+
+  useEffect(() => {
+    setState({...state, email: '', password: ''});
+  }, [isFocused]);
 
   return (
     <View style={styles.viewLoginScreen}>
@@ -55,8 +62,15 @@ const LoginScreen = (props) => {
                 loginUserService(userData)
                   .then((responseData) => {
                     if (responseData.token) {
-                      Alert.alert(responseData.message);
-                      // console.log(responseJson)
+                      Toast.show({
+                        type: 'success',
+                        position: 'bottom',
+                        text1: responseData.message,
+                        visibilityTime: 3000,
+                        autoHide: true,
+                        topOffset: 30,
+                        bottomOffset: 40,
+                      });
                       resetForm({});
                       AsyncStorage.setItem('token', responseData.token);
                       AsyncStorage.setItem(
@@ -64,7 +78,22 @@ const LoginScreen = (props) => {
                         responseData.authId.toString(),
                       );
                       props.navigation.navigate('welcome-home');
+                    } else if (responseData.error) {
+                      Toast.show({
+                        type: 'error',
+                        position: 'bottom',
+                        text1: responseData.error,
+                        visibilityTime: 3000,
+                        autoHide: true,
+                      });
                     } else {
+                      Toast.show({
+                        type: 'error',
+                        position: 'bottom',
+                        text1: responseData.message,
+                        visibilityTime: 3000,
+                        autoHide: true,
+                      });
                       console.log('error');
                     }
                   })
@@ -115,14 +144,14 @@ const LoginScreen = (props) => {
                     color="#0C090D"
                     onPress={handleSubmit}
                     mode="contained"
-                    buttonTitle="Login"
+                    buttonTitle="Log In"
                   />
 
                   <MyButton
                     style={styles.createNewAccountButtonLoginScreen}
                     color="#00A7E1"
                     onPress={() => props.navigation.navigate('register')}
-                    buttonTitle="Create A New Account"
+                    buttonTitle="Create New Account"
                   />
                 </View>
               )}

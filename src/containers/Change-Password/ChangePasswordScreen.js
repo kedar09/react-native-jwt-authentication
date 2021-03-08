@@ -21,6 +21,7 @@ import {
 import MyButton from '../../components/MyButton/MyButton';
 import MyTextInput from '../../components/MyTextInput/MyTextInput';
 import AppHeader from '../../components/AppHeader/AppHeader';
+import Toast from 'react-native-toast-message';
 
 const ChangePasswordScreen = (props) => {
   const [state, setState] = useState({
@@ -42,6 +43,13 @@ const ChangePasswordScreen = (props) => {
             });
             console.log(responseData[0].displayName);
           } else {
+            Toast.show({
+              type: 'error',
+              position: 'bottom',
+              text1: responseData.message,
+              visibilityTime: 3000,
+              autoHide: true,
+            });
             console.log('error');
           }
         })
@@ -61,7 +69,7 @@ const ChangePasswordScreen = (props) => {
     try {
       await AsyncStorage.removeItem('token');
       await AsyncStorage.removeItem('authId');
-      this.props.navigation.navigate('login');
+      props.navigation.navigate('login');
     } catch (error) {
       console.log(error);
     }
@@ -90,12 +98,31 @@ const ChangePasswordScreen = (props) => {
                 updateUserPasswordDataService(values)
                   .then((responseData) => {
                     if (responseData.message) {
-                      Alert.alert(responseData.message);
-                      // console.log(responseJson)
+                      Toast.show({
+                        type: 'success',
+                        position: 'bottom',
+                        text1: responseData.message,
+                        visibilityTime: 3000,
+                        autoHide: true,
+                      });
                       resetForm({});
-
                       props.navigation.navigate('welcome-home');
+                    } else if (responseData.error) {
+                      Toast.show({
+                        type: 'error',
+                        position: 'bottom',
+                        text1: responseData.error,
+                        visibilityTime: 3000,
+                        autoHide: true,
+                      });
                     } else {
+                      Toast.show({
+                        type: 'error',
+                        position: 'bottom',
+                        text1: responseData.message,
+                        visibilityTime: 3000,
+                        autoHide: true,
+                      });
                       console.log('error');
                     }
                   })
@@ -153,16 +180,16 @@ const ChangePasswordScreen = (props) => {
 
                   <MyButton
                     onPress={handleSubmit}
-                    labelStyle={{color: '#E01A4F'}}
+                    // labelStyle={{color: '#E01A4F'}}
                     color="#0C090D"
-                    mode="contained"
+                    // mode="contained"
                     buttonTitle="Save Password"
                   />
                   <MyButton
                     style={{marginTop: 10}}
-                    color="#00A7E1"
+                    color="#E01A4F"
                     onPress={() => props.navigation.navigate('welcome-home')}
-                    buttonTitle="Return to home"
+                    buttonTitle="Cancel"
                   />
                 </View>
               )}
@@ -170,7 +197,7 @@ const ChangePasswordScreen = (props) => {
           </Card.Content>
         </Card>
         <MyButton
-          style={{marginTop: 20}}
+          style={{marginTop: 20, marginHorizontal: 10}}
           onPress={() => logOut()}
           labelStyle={{color: '#E01A4F'}}
           color="#0C090D"

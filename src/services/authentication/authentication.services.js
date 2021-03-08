@@ -11,11 +11,13 @@ export const loginUserService = async (userData) => {
       body: JSON.stringify(userData),
     });
     const responseJson = await response.json();
-    // console.log('response object:', responseJson);
+    console.log('response object:', responseJson);
     return responseJson;
   } catch (error) {
+    console.log(error);
     console.log('Request failed, Please try again!');
-    return error;
+    return {message: 'Request failed, Please try again!'};
+    // return error;
   }
 };
 
@@ -33,7 +35,8 @@ export const registerUserService = async (userData) => {
     // console.log('response object:', responseJson);
     return responseJson;
   } catch (error) {
+    console.log(error);
     console.log('Request failed, Please try again!');
-    return error;
+    return {message: 'Request failed, Please try again!'};
   }
 };

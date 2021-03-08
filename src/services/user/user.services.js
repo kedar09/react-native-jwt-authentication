@@ -19,8 +19,9 @@ export const getUserProfileDataService = async () => {
     // console.log('response object:', responseJson);
     return responseJson;
   } catch (error) {
+    console.log(error);
     console.log('Request failed, Please try again!');
-    return error;
+    return {message: 'Request failed, Please try again!'};
   }
 };
 
@@ -46,8 +47,9 @@ export const updateUserProfileDataService = async (values) => {
     // console.log('response object:', responseJson);
     return responseJson;
   } catch (error) {
+    console.log(error);
     console.log('Request failed, Please try again!');
-    return error;
+    return {message: 'Request failed, Please try again!'};
   }
 };
 
@@ -72,7 +74,8 @@ export const updateUserPasswordDataService = async (values) => {
     // console.log('response object:', responseJson);
     return responseJson;
   } catch (error) {
+    console.log(error);
     console.log('Request failed, Please try again!');
-    return error;
+    return {message: 'Request failed, Please try again!'};
   }
 };

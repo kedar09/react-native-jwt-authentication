@@ -13,6 +13,8 @@ import MyTextInput from '../../components/MyTextInput/MyTextInput';
 import {registerUserService} from '../../services/authentication/authentication.services';
 import {useFocusEffect} from '@react-navigation/native';
 
+import Toast from 'react-native-toast-message';
+
 const RegisterScreen = (props) => {
   const [state, setState] = useState({
     email: '',
@@ -67,7 +69,16 @@ const RegisterScreen = (props) => {
                 registerUserService(userData)
                   .then((responseData) => {
                     if (responseData.token) {
-                      Alert.alert(responseData.message);
+                      Toast.show({
+                        type: 'success',
+                        position: 'bottom',
+                        text1: responseData.message,
+                        visibilityTime: 3000,
+                        autoHide: true,
+                        topOffset: 30,
+                        bottomOffset: 40,
+                      });
+                      // Alert.alert(responseData.message);
                       // console.log(responseJson)
                       resetForm({});
                       AsyncStorage.setItem('token', responseData.token);
@@ -76,7 +87,22 @@ const RegisterScreen = (props) => {
                         responseData.authId.toString(),
                       );
                       props.navigation.navigate('welcome-home');
+                    } else if (responseData.error) {
+                      Toast.show({
+                        type: 'error',
+                        position: 'bottom',
+                        text1: responseData.error,
+                        visibilityTime: 3000,
+                        autoHide: true,
+                      });
                     } else {
+                      Toast.show({
+                        type: 'error',
+                        position: 'bottom',
+                        text1: responseData.message,
+                        visibilityTime: 3000,
+                        autoHide: true,
+                      });
                       console.log('error');
                     }
                   })
@@ -182,13 +208,13 @@ const RegisterScreen = (props) => {
                     labelStyle={{color: '#E01A4F'}}
                     color="#0C090D"
                     mode="contained"
-                    buttonTitle="Register"
+                    buttonTitle="Sing Up"
                   />
                   <MyButton
                     style={{marginTop: 10}}
                     color="#00A7E1"
                     onPress={() => props.navigation.navigate('login')}
-                    buttonTitle="Go to login"
+                    buttonTitle="Have an account? Log in"
                   />
                 </View>
               )}
