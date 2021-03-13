@@ -1,5 +1,13 @@
 # react-native-jwt-authentication
 React Native JWT Authentication with NodeJs Mysql - https://github.com/kedar09/nodejs-mysql-jwt-authentication
+ 
+**Prerequisites:**
+1. [React Native](https://reactnative.dev/docs/getting-started)
+2. [React Navigation](https://reactnavigation.org/)
+3. [Express](https://expressjs.com/)
+4. [MySQL](https://www.mysql.com/)
+5. [JSON Web Tokens](https://jwt.io/)
+6. [React Native Paper](https://callstack.github.io/react-native-paper/index.html)
 
 **Example :**
 
