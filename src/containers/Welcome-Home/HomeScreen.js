@@ -15,15 +15,25 @@ import {UserContext} from '../../store/contexts/user.context';
 
 const HomeScreen = (props) => {
   const {userState, dispatchUser} = useContext(UserContext);
-  const [state, setState] = useState({userData: ''});
   const isFocused = useIsFocused();
   const getUserProfileData = async () => {
     try {
       getUserProfileDataService()
-        .then((responseData) => {
+        .then(async (responseData) => {
           console.log('userData' + responseData);
           if (responseData.length > 0) {
-            setState({...state, userData: responseData[0]});
+            await dispatchUser({
+              type: 'LOGGED_IN_SUCCESSFUL',
+              value: {
+                isLoading: false,
+                isAuthenticated: true,
+                displayName: responseData[0].displayName,
+                email: responseData[0].email,
+                phoneNumber: responseData[0].phoneNumber,
+                authId: responseData.authId,
+                token: responseData.token,
+              },
+            });
           } else if (responseData.error) {
             Toast.show({
               type: 'error',
@@ -86,7 +96,7 @@ const HomeScreen = (props) => {
   return (
     <View style={styles.viewHomeScreen}>
       <AppHeader
-        headerTitle={state.userData.displayName}
+        headerTitle={userState.displayName}
         leftIconMenu={false}
         rightIconMenu={false}
       />
@@ -102,15 +112,15 @@ const HomeScreen = (props) => {
             <View style={{marginVertical: 10}}>
               <Text style={styles.textOne}>
                 Name:-
-                <Text>{state.userData.displayName}</Text>
+                <Text>{userState.displayName}</Text>
               </Text>
               <Text style={styles.textOne}>
                 Email:-
-                <Text>{state.userData.email}</Text>
+                <Text>{userState.email}</Text>
               </Text>
               <Text style={styles.textOne}>
                 Phone Number:-
-                <Text>{state.userData.phoneNumber}</Text>
+                <Text>{userState.phoneNumber}</Text>
               </Text>
             </View>
             <MyButton
@@ -118,7 +128,7 @@ const HomeScreen = (props) => {
               color="#00A7E1"
               onPress={() =>
                 props.navigation.navigate('edit-profile', {
-                  displayName: state.userData.displayName,
+                  displayName: userState.displayName,
                 })
               }
               buttonTitle="Edit Profile"
@@ -128,7 +138,7 @@ const HomeScreen = (props) => {
               color="#00A7E1"
               onPress={() =>
                 props.navigation.navigate('change-password', {
-                  displayName: state.userData.displayName,
+                  displayName: userState.displayName,
                 })
               }
               buttonTitle="Change Password"

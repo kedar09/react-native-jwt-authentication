@@ -2,14 +2,7 @@
 import React, {useState, useEffect} from 'react';
 import {View, ScrollView, LogBox, Alert} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
-import {
-  Button,
-  Card,
-  Title,
-  Divider,
-  TextInput,
-  HelperText,
-} from 'react-native-paper';
+import {Card, Title, Divider} from 'react-native-paper';
 
 import * as yup from 'yup';
 import {Formik} from 'formik';
