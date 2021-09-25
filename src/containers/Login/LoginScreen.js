@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {View, Alert, ScrollView, Linking} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 
@@ -14,8 +14,10 @@ import MyButton from '../../components/MyButton/MyButton';
 import {useIsFocused} from '@react-navigation/native';
 
 import Toast from 'react-native-toast-message';
+import {UserContext} from '../../store/contexts/user.context';
 
 const LoginScreen = (props) => {
+  const {userState, dispatchUser} = useContext(UserContext);
   const isFocused = useIsFocused;
   const [state, setState] = useState({email: '', password: ''});
   // useFocusEffect(
@@ -23,14 +25,6 @@ const LoginScreen = (props) => {
   //     setState({...state, email: '', password: ''});
   //   }, []),
   // );
-
-  useEffect(() => {
-    AsyncStorage.getItem('token').then((userToken) => {
-      if (userToken) {
-        props.navigation.navigate('welcome-home');
-      }
-    });
-  }, []);
 
   useEffect(() => {
     setState({...state, email: '', password: ''});
@@ -60,7 +54,7 @@ const LoginScreen = (props) => {
                   password: values.password,
                 };
                 loginUserService(userData)
-                  .then((responseData) => {
+                  .then(async (responseData) => {
                     if (responseData.token) {
                       Toast.show({
                         type: 'success',
@@ -72,12 +66,23 @@ const LoginScreen = (props) => {
                         bottomOffset: 40,
                       });
                       resetForm({});
-                      AsyncStorage.setItem('token', responseData.token);
-                      AsyncStorage.setItem(
+                      await AsyncStorage.setItem('token', responseData.token);
+                      await AsyncStorage.setItem(
                         'authId',
                         responseData.authId.toString(),
                       );
-                      props.navigation.navigate('welcome-home');
+                      await dispatchUser({
+                        type: 'LOGGED_IN_SUCCESSFUL',
+                        value: {
+                          isLoading: false,
+                          isAuthenticated: true,
+                          displayName: '',
+                          email: '',
+                          phoneNumber: '',
+                          authId: responseData.authId,
+                          token: responseData.token,
+                        },
+                      });
                     } else if (responseData.error) {
                       Toast.show({
                         type: 'error',

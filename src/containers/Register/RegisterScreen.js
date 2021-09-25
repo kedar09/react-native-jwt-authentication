@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useState, useCallback} from 'react';
+import React, {useState, useContext, useCallback} from 'react';
 import {View, Alert, ScrollView} from 'react-native';
 
 import AsyncStorage from '@react-native-community/async-storage';
@@ -14,8 +14,10 @@ import {registerUserService} from '../../services/authentication/authentication.
 import {useFocusEffect} from '@react-navigation/native';
 
 import Toast from 'react-native-toast-message';
+import {UserContext} from '../../store/contexts/user.context';
 
 const RegisterScreen = (props) => {
+  const {userState, dispatchUser} = useContext(UserContext);
   const [state, setState] = useState({
     email: '',
     displayName: '',
@@ -67,7 +69,7 @@ const RegisterScreen = (props) => {
                   phoneNumber: values.phoneNumber,
                 };
                 registerUserService(userData)
-                  .then((responseData) => {
+                  .then(async (responseData) => {
                     if (responseData.token) {
                       Toast.show({
                         type: 'success',
@@ -81,12 +83,24 @@ const RegisterScreen = (props) => {
                       // Alert.alert(responseData.message);
                       // console.log(responseJson)
                       resetForm({});
-                      AsyncStorage.setItem('token', responseData.token);
-                      AsyncStorage.setItem(
+                      await AsyncStorage.setItem('token', responseData.token);
+                      await AsyncStorage.setItem(
                         'authId',
                         responseData.authId.toString(),
                       );
-                      props.navigation.navigate('welcome-home');
+                      await dispatchUser({
+                        type: 'LOGGED_IN_SUCCESSFUL',
+                        value: {
+                          isLoading: false,
+                          isAuthenticated: true,
+                          displayName: '',
+                          email: '',
+                          phoneNumber: '',
+                          authId: responseData.authId,
+                          token: responseData.token,
+                        },
+                      });
+                      // props.navigation.navigate('welcome-home');
                     } else if (responseData.error) {
                       Toast.show({
                         type: 'error',
@@ -113,7 +127,9 @@ const RegisterScreen = (props) => {
               validationSchema={yup.object().shape({
                 email: yup.string().required(),
                 password: yup.string().required(),
-                confirmPassword: yup.string().required(),
+                confirmPassword: yup
+                  .string()
+                  .oneOf([yup.ref('password'), null], 'Passwords must match'),
                 phoneNumber: yup.number().required(),
                 // displayName: yup
                 //     .string()
@@ -195,11 +211,7 @@ const RegisterScreen = (props) => {
                           ? true
                           : false
                       }
-                      errorName={
-                        values.confirmPassword !== values.password
-                          ? 'Password not matched'
-                          : errors.confirmPassword
-                      }
+                      errorName={errors.confirmPassword}
                     />
                   </View>
 

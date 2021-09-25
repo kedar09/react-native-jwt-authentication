@@ -10,11 +10,18 @@ import React from 'react';
 import {RootNavigator} from './src/navigation/RootNavigator';
 import Toast from 'react-native-toast-message';
 
+import {NavigationContainer} from '@react-navigation/native';
+import ContextProvider from './src/store/contexts';
+
 const App = () => {
   return (
     <>
-      <RootNavigator />
-      <Toast ref={(ref) => Toast.setRef(ref)} />
+      <NavigationContainer>
+        <ContextProvider>
+          <RootNavigator />
+          <Toast ref={(ref) => Toast.setRef(ref)} />
+        </ContextProvider>
+      </NavigationContainer>
     </>
   );
 };

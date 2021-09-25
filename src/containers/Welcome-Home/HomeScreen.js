@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {View, ScrollView} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 
@@ -11,8 +11,10 @@ import AppHeader from '../../components/AppHeader/AppHeader';
 import {useIsFocused} from '@react-navigation/native';
 
 import Toast from 'react-native-toast-message';
+import {UserContext} from '../../store/contexts/user.context';
 
 const HomeScreen = (props) => {
+  const {userState, dispatchUser} = useContext(UserContext);
   const [state, setState] = useState({userData: ''});
   const isFocused = useIsFocused();
   const getUserProfileData = async () => {
@@ -50,14 +52,32 @@ const HomeScreen = (props) => {
   };
 
   useEffect(() => {
-    getUserProfileData();
-  }, [isFocused]);
+    const unsubscribe = props.navigation.addListener('focus', () => {
+      getUserProfileData();
+    });
+
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, [props.navigation]);
 
   const logOut = async () => {
     try {
       await AsyncStorage.removeItem('token');
       await AsyncStorage.removeItem('authId');
-      props.navigation.navigate('login');
+      await dispatchUser({
+        type: 'LOGGED_IN_SUCCESSFUL',
+        value: {
+          isLoading: false,
+          isAuthenticated: false,
+          displayName: '',
+          email: '',
+          phoneNumber: '',
+          authId: '',
+          token: null,
+        },
+      });
+
+      // props.navigation.navigate('login');
     } catch (error) {
       // Error saving data
     }
