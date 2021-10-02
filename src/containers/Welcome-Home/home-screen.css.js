@@ -12,4 +12,6 @@ export default StyleSheet.create({
     fontFamily: 'Courgette-Regular',
   },
   textOne: {fontWeight: 'bold', fontSize: 16, marginVertical: 5},
+  viewOfUserProfile: {marginVertical: 10},
+  buttonLabelStyle: {color: '#E01A4F'},
 });

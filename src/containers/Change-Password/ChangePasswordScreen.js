@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useState, useEffect} from 'react';
-import {View, ScrollView, LogBox, Alert} from 'react-native';
+import React, {useState, useEffect, useContext} from 'react';
+import {View, ScrollView} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import {Card, Title, Divider} from 'react-native-paper';
 
@@ -15,8 +15,10 @@ import MyButton from '../../components/MyButton/MyButton';
 import MyTextInput from '../../components/MyTextInput/MyTextInput';
 import AppHeader from '../../components/AppHeader/AppHeader';
 import Toast from 'react-native-toast-message';
+import {UserContext} from '../../store/contexts/user.context';
 
 const ChangePasswordScreen = (props) => {
+  const {userState, dispatchUser} = useContext(UserContext);
   const [state, setState] = useState({
     userData: '',
     password: '',
@@ -34,7 +36,6 @@ const ChangePasswordScreen = (props) => {
               phoneNumber: responseData[0].phoneNumber.toString(),
               displayName: responseData[0].displayName,
             });
-            console.log(responseData[0].displayName);
           } else {
             Toast.show({
               type: 'error',
@@ -43,7 +44,6 @@ const ChangePasswordScreen = (props) => {
               visibilityTime: 3000,
               autoHide: true,
             });
-            console.log('error');
           }
         })
         .catch((error) => {
@@ -62,9 +62,20 @@ const ChangePasswordScreen = (props) => {
     try {
       await AsyncStorage.removeItem('token');
       await AsyncStorage.removeItem('authId');
-      props.navigation.navigate('login');
+      await dispatchUser({
+        type: 'LOGGED_IN_SUCCESSFUL',
+        value: {
+          isLoading: false,
+          isAuthenticated: false,
+          displayName: '',
+          email: '',
+          phoneNumber: '',
+          authId: '',
+          token: null,
+        },
+      });
     } catch (error) {
-      console.log(error);
+      console.log('something went wrong', error);
     }
   };
 
@@ -179,7 +190,7 @@ const ChangePasswordScreen = (props) => {
                     buttonTitle="Save Password"
                   />
                   <MyButton
-                    style={{marginTop: 10}}
+                    style={styles.welcomeButtonStyle}
                     color="#E01A4F"
                     onPress={() => props.navigation.navigate('welcome-home')}
                     buttonTitle="Cancel"
@@ -190,9 +201,9 @@ const ChangePasswordScreen = (props) => {
           </Card.Content>
         </Card>
         <MyButton
-          style={{marginTop: 20, marginHorizontal: 10}}
+          style={styles.logoutButtonStyle}
           onPress={() => logOut()}
-          labelStyle={{color: '#E01A4F'}}
+          labelStyle={styles.labelLogoutButtonStyle}
           color="#0C090D"
           mode="contained"
           buttonTitle="Log Out"

@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useEffect, useContext} from 'react';
 import {View, ScrollView} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 
@@ -8,19 +8,16 @@ import styles from './home-screen.css';
 import MyButton from '../../components/MyButton/MyButton';
 import {getUserProfileDataService} from '../../services/user/user.services';
 import AppHeader from '../../components/AppHeader/AppHeader';
-import {useIsFocused} from '@react-navigation/native';
 
 import Toast from 'react-native-toast-message';
 import {UserContext} from '../../store/contexts/user.context';
 
 const HomeScreen = (props) => {
   const {userState, dispatchUser} = useContext(UserContext);
-  const isFocused = useIsFocused();
   const getUserProfileData = async () => {
     try {
       getUserProfileDataService()
         .then(async (responseData) => {
-          console.log('userData' + responseData);
           if (responseData.length > 0) {
             await dispatchUser({
               type: 'LOGGED_IN_SUCCESSFUL',
@@ -50,7 +47,6 @@ const HomeScreen = (props) => {
               visibilityTime: 3000,
               autoHide: true,
             });
-            console.log('error');
           }
         })
         .catch((error) => {
@@ -66,7 +62,6 @@ const HomeScreen = (props) => {
       getUserProfileData();
     });
 
-    // Return the function to unsubscribe from the event so it gets removed on unmount
     return unsubscribe;
   }, [props.navigation]);
 
@@ -86,10 +81,8 @@ const HomeScreen = (props) => {
           token: null,
         },
       });
-
-      // props.navigation.navigate('login');
     } catch (error) {
-      // Error saving data
+      console.log('something went wrong', error);
     }
   };
 
@@ -109,7 +102,7 @@ const HomeScreen = (props) => {
           />
           <Divider />
           <Card.Content>
-            <View style={{marginVertical: 10}}>
+            <View style={styles.viewOfUserProfile}>
               <Text style={styles.textOne}>
                 Name:-
                 <Text>{userState.displayName}</Text>
@@ -148,7 +141,7 @@ const HomeScreen = (props) => {
         <MyButton
           style={styles.buttonHomeScreen}
           onPress={() => logOut()}
-          labelStyle={{color: '#E01A4F'}}
+          labelStyle={styles.buttonLabelStyle}
           color="#0C090D"
           mode="contained"
           buttonTitle="Log Out"

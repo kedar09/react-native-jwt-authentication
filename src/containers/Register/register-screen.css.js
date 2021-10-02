@@ -10,4 +10,6 @@ export default StyleSheet.create({
     color: '#28666E',
     fontFamily: 'Courgette-Regular',
   },
+  signUpButtonStyle: {color: '#E01A4F'},
+  alreadyAccountButtonStyle: {marginTop: 10},
 });

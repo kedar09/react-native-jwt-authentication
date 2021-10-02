@@ -10,4 +10,7 @@ export default StyleSheet.create({
     color: '#28666E',
     fontFamily: 'Courgette-Regular',
   },
+  welcomeButtonStyle: {marginTop: 10},
+  logoutButtonStyle: {marginTop: 20, marginHorizontal: 10},
+  labelLogoutButtonStyle: {color: '#E01A4F'},
 });

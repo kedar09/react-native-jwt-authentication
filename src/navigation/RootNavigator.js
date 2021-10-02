@@ -1,13 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect} from 'react';
-import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import LoginScreen from '../containers/Login/LoginScreen';
 import RegisterScreen from '../containers/Register/RegisterScreen';
 import HomeScreen from '../containers/Welcome-Home/HomeScreen';
 import ChangePasswordScreen from '../containers/Change-Password/ChangePasswordScreen';
 import EditProfileScreen from '../containers/Edit-Profile/EditProfileScreen';
-import {useState} from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
 import {ActivityIndicator, View} from 'react-native';
 import {UserContext} from '../store/contexts/user.context';
@@ -22,7 +20,6 @@ export const RootNavigator = () => {
     try {
       const tokenData = await AsyncStorage.getItem('token');
       const authId = await AsyncStorage.getItem('authId');
-      console.log(typeof tokenData, 'dsadsa', tokenData);
       await dispatchUser({
         type: 'LOGGED_IN_SUCCESSFUL',
         value: {
@@ -35,9 +32,7 @@ export const RootNavigator = () => {
           token: tokenData,
         },
       });
-      // setLoader(false);
     } catch (e) {
-      // setLoader(false);
       console.log(e);
     }
   };

@@ -9,4 +9,5 @@ export default StyleSheet.create({
     color: '#28666E',
     fontFamily: 'Courgette-Regular',
   },
+  logInButtonStyle: {color: '#E01A4F'},
 });

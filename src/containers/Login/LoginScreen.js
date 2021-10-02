@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useState, useEffect, useContext} from 'react';
-import {View, Alert, ScrollView, Linking} from 'react-native';
+import React, {useContext} from 'react';
+import {View, ScrollView} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 
 import * as yup from 'yup';
@@ -11,24 +11,12 @@ import {loginUserService} from '../../services/authentication/authentication.ser
 import AppHeader from '../../components/AppHeader/AppHeader';
 import MyTextInput from '../../components/MyTextInput/MyTextInput';
 import MyButton from '../../components/MyButton/MyButton';
-import {useIsFocused} from '@react-navigation/native';
 
 import Toast from 'react-native-toast-message';
 import {UserContext} from '../../store/contexts/user.context';
 
 const LoginScreen = (props) => {
   const {userState, dispatchUser} = useContext(UserContext);
-  const isFocused = useIsFocused;
-  const [state, setState] = useState({email: '', password: ''});
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     setState({...state, email: '', password: ''});
-  //   }, []),
-  // );
-
-  useEffect(() => {
-    setState({...state, email: '', password: ''});
-  }, [isFocused]);
 
   return (
     <View style={styles.viewLoginScreen}>
@@ -47,7 +35,7 @@ const LoginScreen = (props) => {
           <Card.Content>
             <Formik
               enableReinitialize={true}
-              initialValues={state}
+              initialValues={{email: '', password: ''}}
               onSubmit={(values, {resetForm}) => {
                 let userData = {
                   email: values.email,
@@ -99,7 +87,6 @@ const LoginScreen = (props) => {
                         visibilityTime: 3000,
                         autoHide: true,
                       });
-                      console.log('error');
                     }
                   })
                   .catch((error) => {
@@ -145,7 +132,7 @@ const LoginScreen = (props) => {
                   </View>
 
                   <MyButton
-                    labelStyle={{color: '#E01A4F'}}
+                    labelStyle={styles.logInButtonStyle}
                     color="#0C090D"
                     onPress={handleSubmit}
                     mode="contained"
