@@ -20,18 +20,24 @@ export const RootNavigator = () => {
     try {
       const tokenData = await AsyncStorage.getItem('token');
       const authId = await AsyncStorage.getItem('authId');
-      await dispatchUser({
-        type: 'LOGGED_IN_SUCCESSFUL',
-        value: {
-          isLoading: false,
-          isAuthenticated: true,
-          displayName: '',
-          email: '',
-          phoneNumber: '',
-          authId: authId,
-          token: tokenData,
-        },
-      });
+      if (authId !== null && tokenData !== null) {
+        await dispatchUser({
+          type: 'LOGGED_IN_SUCCESSFUL',
+          value: {
+            isLoading: false,
+            isAuthenticated: true,
+            displayName: '',
+            email: '',
+            phoneNumber: '',
+            authId: authId,
+            token: tokenData,
+          },
+        });
+      } else {
+        await dispatchUser({
+          type: 'LOGIN_FAILED',
+        });
+      }
     } catch (e) {
       console.log(e);
     }

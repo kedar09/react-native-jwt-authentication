@@ -20,7 +20,7 @@ export const userReducer = (state, action) => {
         isAuthenticated: action.value.isAuthenticated,
       };
     case 'LOGIN_FAILED':
-      return {...state};
+      return {...state, isLoading: false};
     default:
       return state;
   }
