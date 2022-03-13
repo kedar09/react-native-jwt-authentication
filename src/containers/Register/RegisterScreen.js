@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useState, useCallback} from 'react';
-import {View, Alert, ScrollView} from 'react-native';
+import React, {useState, useContext, useCallback} from 'react';
+import {View, ScrollView} from 'react-native';
 
 import AsyncStorage from '@react-native-community/async-storage';
 import * as yup from 'yup';
@@ -11,30 +11,12 @@ import MyButton from '../../components/MyButton/MyButton';
 import AppHeader from '../../components/AppHeader/AppHeader';
 import MyTextInput from '../../components/MyTextInput/MyTextInput';
 import {registerUserService} from '../../services/authentication/authentication.services';
-import {useFocusEffect} from '@react-navigation/native';
 
 import Toast from 'react-native-toast-message';
+import {UserContext} from '../../store/contexts/user.context';
 
 const RegisterScreen = (props) => {
-  const [state, setState] = useState({
-    email: '',
-    displayName: '',
-    password: '',
-    confirmPassword: '',
-    phoneNumber: '',
-  });
-  useFocusEffect(
-    useCallback(() => {
-      setState({
-        ...state,
-        email: '',
-        displayName: '',
-        password: '',
-        confirmPassword: '',
-        phoneNumber: '',
-      });
-    }, []),
-  );
+  const {userState, dispatchUser} = useContext(UserContext);
 
   return (
     <View style={styles.viewRegisterScreen}>
@@ -67,7 +49,7 @@ const RegisterScreen = (props) => {
                   phoneNumber: values.phoneNumber,
                 };
                 registerUserService(userData)
-                  .then((responseData) => {
+                  .then(async (responseData) => {
                     if (responseData.token) {
                       Toast.show({
                         type: 'success',
@@ -78,15 +60,24 @@ const RegisterScreen = (props) => {
                         topOffset: 30,
                         bottomOffset: 40,
                       });
-                      // Alert.alert(responseData.message);
-                      // console.log(responseJson)
                       resetForm({});
-                      AsyncStorage.setItem('token', responseData.token);
-                      AsyncStorage.setItem(
+                      await AsyncStorage.setItem('token', responseData.token);
+                      await AsyncStorage.setItem(
                         'authId',
                         responseData.authId.toString(),
                       );
-                      props.navigation.navigate('welcome-home');
+                      await dispatchUser({
+                        type: 'LOGGED_IN_SUCCESSFUL',
+                        value: {
+                          isLoading: false,
+                          isAuthenticated: true,
+                          displayName: '',
+                          email: '',
+                          phoneNumber: '',
+                          authId: responseData.authId,
+                          token: responseData.token,
+                        },
+                      });
                     } else if (responseData.error) {
                       Toast.show({
                         type: 'error',
@@ -103,7 +94,6 @@ const RegisterScreen = (props) => {
                         visibilityTime: 3000,
                         autoHide: true,
                       });
-                      console.log('error');
                     }
                   })
                   .catch((error) => {
@@ -113,10 +103,10 @@ const RegisterScreen = (props) => {
               validationSchema={yup.object().shape({
                 email: yup.string().required(),
                 password: yup.string().required(),
-                confirmPassword: yup.string().required(),
+                confirmPassword: yup
+                  .string()
+                  .oneOf([yup.ref('password'), null], 'Passwords must match'),
                 phoneNumber: yup.number().required(),
-                // displayName: yup
-                //     .string()
               })}>
               {({
                 handleChange,
@@ -195,23 +185,19 @@ const RegisterScreen = (props) => {
                           ? true
                           : false
                       }
-                      errorName={
-                        values.confirmPassword !== values.password
-                          ? 'Password not matched'
-                          : errors.confirmPassword
-                      }
+                      errorName={errors.confirmPassword}
                     />
                   </View>
 
                   <MyButton
                     onPress={handleSubmit}
-                    labelStyle={{color: '#E01A4F'}}
+                    labelStyle={styles.signUpButtonStyle}
                     color="#0C090D"
                     mode="contained"
                     buttonTitle="Sing Up"
                   />
                   <MyButton
-                    style={{marginTop: 10}}
+                    style={styles.alreadyAccountButtonStyle}
                     color="#00A7E1"
                     onPress={() => props.navigation.navigate('login')}
                     buttonTitle="Have an account? Log in"

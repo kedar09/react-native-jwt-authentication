@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {View, ScrollView} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 
@@ -14,8 +14,10 @@ import MyButton from '../../components/MyButton/MyButton';
 import AppHeader from '../../components/AppHeader/AppHeader';
 import MyTextInput from '../../components/MyTextInput/MyTextInput';
 import Toast from 'react-native-toast-message';
+import {UserContext} from '../../store/contexts/user.context';
 
 const EditProfileScreen = (props) => {
+  const {userState, dispatchUser} = useContext(UserContext);
   const [state, setState] = useState({
     email: '',
     phoneNumber: 0,
@@ -49,8 +51,6 @@ const EditProfileScreen = (props) => {
               visibilityTime: 3000,
               autoHide: true,
             });
-
-            console.log('error');
           }
         })
         .catch((error) => {
@@ -69,9 +69,20 @@ const EditProfileScreen = (props) => {
     try {
       await AsyncStorage.removeItem('token');
       await AsyncStorage.removeItem('authId');
-      props.navigation.navigate('login');
+      await dispatchUser({
+        type: 'LOGGED_IN_SUCCESSFUL',
+        value: {
+          isLoading: false,
+          isAuthenticated: false,
+          displayName: '',
+          email: '',
+          phoneNumber: '',
+          authId: '',
+          token: null,
+        },
+      });
     } catch (error) {
-      console.log(error);
+      console.log('something went wrong', error);
     }
   };
 
@@ -123,7 +134,6 @@ const EditProfileScreen = (props) => {
                         visibilityTime: 3000,
                         autoHide: true,
                       });
-                      console.log('error');
                     }
                   })
                   .catch((error) => {
@@ -181,7 +191,7 @@ const EditProfileScreen = (props) => {
                     buttonTitle="Save Profile"
                   />
                   <MyButton
-                    style={{marginTop: 10}}
+                    style={styles.cancelUpdateButtonStyle}
                     color="#E01A4F"
                     onPress={() => props.navigation.navigate('welcome-home')}
                     buttonTitle="Cancel"
@@ -192,9 +202,9 @@ const EditProfileScreen = (props) => {
           </Card.Content>
         </Card>
         <MyButton
-          style={{marginTop: 20, marginHorizontal: 10}}
+          style={styles.logOutButtonStyle}
           onPress={() => logOut()}
-          labelStyle={{color: '#E01A4F'}}
+          labelStyle={styles.logOutLabelStyle}
           color="#0C090D"
           mode="contained"
           buttonTitle="Log Out"

@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useState, useEffect, useCallback} from 'react';
-import {View, Alert, ScrollView, Linking} from 'react-native';
+import React, {useContext} from 'react';
+import {View, ScrollView} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 
 import * as yup from 'yup';
@@ -11,30 +11,12 @@ import {loginUserService} from '../../services/authentication/authentication.ser
 import AppHeader from '../../components/AppHeader/AppHeader';
 import MyTextInput from '../../components/MyTextInput/MyTextInput';
 import MyButton from '../../components/MyButton/MyButton';
-import {useIsFocused} from '@react-navigation/native';
 
 import Toast from 'react-native-toast-message';
+import {UserContext} from '../../store/contexts/user.context';
 
 const LoginScreen = (props) => {
-  const isFocused = useIsFocused;
-  const [state, setState] = useState({email: '', password: ''});
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     setState({...state, email: '', password: ''});
-  //   }, []),
-  // );
-
-  useEffect(() => {
-    AsyncStorage.getItem('token').then((userToken) => {
-      if (userToken) {
-        props.navigation.navigate('welcome-home');
-      }
-    });
-  }, []);
-
-  useEffect(() => {
-    setState({...state, email: '', password: ''});
-  }, [isFocused]);
+  const {userState, dispatchUser} = useContext(UserContext);
 
   return (
     <View style={styles.viewLoginScreen}>
@@ -53,14 +35,14 @@ const LoginScreen = (props) => {
           <Card.Content>
             <Formik
               enableReinitialize={true}
-              initialValues={state}
+              initialValues={{email: '', password: ''}}
               onSubmit={(values, {resetForm}) => {
                 let userData = {
                   email: values.email,
                   password: values.password,
                 };
                 loginUserService(userData)
-                  .then((responseData) => {
+                  .then(async (responseData) => {
                     if (responseData.token) {
                       Toast.show({
                         type: 'success',
@@ -72,12 +54,23 @@ const LoginScreen = (props) => {
                         bottomOffset: 40,
                       });
                       resetForm({});
-                      AsyncStorage.setItem('token', responseData.token);
-                      AsyncStorage.setItem(
+                      await AsyncStorage.setItem('token', responseData.token);
+                      await AsyncStorage.setItem(
                         'authId',
                         responseData.authId.toString(),
                       );
-                      props.navigation.navigate('welcome-home');
+                      await dispatchUser({
+                        type: 'LOGGED_IN_SUCCESSFUL',
+                        value: {
+                          isLoading: false,
+                          isAuthenticated: true,
+                          displayName: '',
+                          email: '',
+                          phoneNumber: '',
+                          authId: responseData.authId,
+                          token: responseData.token,
+                        },
+                      });
                     } else if (responseData.error) {
                       Toast.show({
                         type: 'error',
@@ -94,7 +87,6 @@ const LoginScreen = (props) => {
                         visibilityTime: 3000,
                         autoHide: true,
                       });
-                      console.log('error');
                     }
                   })
                   .catch((error) => {
@@ -140,7 +132,7 @@ const LoginScreen = (props) => {
                   </View>
 
                   <MyButton
-                    labelStyle={{color: '#E01A4F'}}
+                    labelStyle={styles.logInButtonStyle}
                     color="#0C090D"
                     onPress={handleSubmit}
                     mode="contained"
